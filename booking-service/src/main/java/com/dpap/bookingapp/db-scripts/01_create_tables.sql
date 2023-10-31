@@ -6,6 +6,7 @@ CREATE SEQUENCE seq_accommodations START 1;
 CREATE SEQUENCE seq_users START 1;
 CREATE SEQUENCE seq_accommodations_rooms START 1;
 CREATE SEQUENCE seq_availabilities START 1 INCREMENT BY 1;;
+CREATE SEQUENCE seq_reviews START 1 INCREMENT BY 1;;
 CREATE TABLE roles
 (
     id   INT PRIMARY KEY NOT NULL,
@@ -83,24 +84,17 @@ CREATE TABLE availability
     finish    TIMESTAMP       NOT NULL,
     at        TIMESTAMP       NOT NULL
 );
--- CREATE TABLE room_details
--- (
---     id          INT PRIMARY KEY NOT NULL,
---     name        TEXT,
---     description TEXT,
---     image_url   TEXT,
---     room_id     INT,
---     facilities  jsonb,
---     FOREIGN KEY (room_id) REFERENCES rooms (id)
--- );
--- CREATE TABLE rooms_facilities
--- (
---     id          INT PRIMARY KEY NOT NULL,
---     facility_id INT,
---     room_id     INT,
---     FOREIGN KEY (room_id) REFERENCES rooms (id),
---     FOREIGN KEY (facility_id) REFERENCES facilities (id)
--- );
+CREATE TABLE reviews
+(
+    id       INT PRIMARY KEY NOT NULL,
+    content  TEXT            NOT NULL,
+    rating   INT             NOT NULL,
+    place_id INT             NOT NULL,
+    user_id  INT             NOT NULL,
+    at       timestamp       NOT NULL,
+    FOREIGN KEY (place_id) REFERENCES places (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
 CREATE TABLE reservation_states
 (
     id   INT PRIMARY KEY NOT NULL,

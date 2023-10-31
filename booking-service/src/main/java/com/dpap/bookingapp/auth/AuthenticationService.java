@@ -49,33 +49,13 @@ public class AuthenticationService {
     }
 
     private void validate(RegisterRequest registerRequest) {
-
-        if (!checkPassword(registerRequest.password())) {
-            throw new RuntimeException("Wrong password");
-        }
-
-        if (!checkEmail(registerRequest.email())) {
-            throw new RuntimeException("Wrong email");
+        if(!checkEmailUniqueness(registerRequest.email())){
+            throw new RuntimeException("Account with email: " + registerRequest.email() + " already exists.");
         }
     }
 
-    private boolean checkPassword(String password) {
-        final String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$";
-        return password != null && !password.isEmpty() && Pattern.matches(regex, password);
-    }
-
-    private boolean checkLastName(String lastName) {
-        return lastName != null && !lastName.isEmpty();
-    }
-
-    private boolean checkFirstName(String firstName) {
-        return firstName != null && !firstName.isEmpty();
-    }
-
-    private boolean checkEmail(String email) {
-        final String regex = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
-        return email != null && Pattern.matches(regex, email)
-                && !email.isEmpty();
+    public boolean checkEmailUniqueness(String email) {
+        return !userDatabase.existsByEmail(email);
     }
 
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {

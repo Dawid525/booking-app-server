@@ -16,4 +16,8 @@ public record PlaceResponse(
         List<RoomDTO> rooms,
         List<FacilityType> facilities
 ) {
+
+    public PlaceResponse withRooms(List<RoomDTO> rooms) {
+        return new PlaceResponse(id, name, description, address, placeCategory, userId, rooms, facilities);
+    }
 }

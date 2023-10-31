@@ -1,6 +1,7 @@
 package com.dpap.bookingapp.users;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +42,9 @@ public class UserRepository implements UserDatabase {
 
     @Override
     public Optional<User> findById(Long id) {
-       return userJpaRepository.findById(id).map(userMapper::fromUserEntity);
+        return userJpaRepository.findById(id).map(userMapper::fromUserEntity);
     }
+
     public Optional<UserEntity> findEntityById(Long id) {
         return userJpaRepository.findById(id);
     }
@@ -55,5 +57,21 @@ public class UserRepository implements UserDatabase {
     @Override
     public Boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public void changeEmail(String email, Long userId) {
+        var user = userJpaRepository.findById(userId);
+        user.ifPresent(userEntity -> userEntity.setEmail(email));
+    }
+    @Override
+    public void changeUsername(String username, Long userId) {
+        var user = userJpaRepository.findById(userId);
+        user.ifPresent(userEntity -> userEntity.setUsername(username));
+    }
+    @Override
+    public void changePassword(String password, Long userId) {
+        var user = userJpaRepository.findById(userId);
+        user.ifPresent(userEntity -> userEntity.setPassword(password));
     }
 }

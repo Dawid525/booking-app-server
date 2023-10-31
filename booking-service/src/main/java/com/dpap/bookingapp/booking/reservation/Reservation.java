@@ -96,6 +96,9 @@ public class Reservation {
     public void checkIn() {
         this.state = ReservationState.CHECK_IN;
     }
+    public void paid(){
+        this.state = ReservationState.PAID;
+    }
 
     public void checkOut() {
         this.state = ReservationState.CHECK_OUT;

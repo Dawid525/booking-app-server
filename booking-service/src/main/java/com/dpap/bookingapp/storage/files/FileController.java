@@ -1,5 +1,6 @@
 package com.dpap.bookingapp.storage.files;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Tag(name = "Files")
 public class FileController {
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);

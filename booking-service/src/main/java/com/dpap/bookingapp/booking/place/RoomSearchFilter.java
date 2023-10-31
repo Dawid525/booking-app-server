@@ -24,6 +24,10 @@ public class RoomSearchFilter {
         return Optional.ofNullable(capacity);
     }
 
+    public boolean isEmpty() {
+       return getPricePerNight().isEmpty() && getCapacity().isEmpty();
+    }
+
     public static final class Builder {
         private Long pricePerNight;
         private Integer capacity;

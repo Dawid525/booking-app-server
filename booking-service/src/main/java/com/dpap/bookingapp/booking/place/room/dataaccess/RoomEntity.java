@@ -21,14 +21,14 @@ public class RoomEntity {
     private Long pricePerNight;
     private String description;
     private String name;
-
+    @ManyToOne
+    @JoinColumn(name="place_id", nullable=false)
+    private PlaceEntity place;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private String facilities;
 
-    @ManyToOne
-    @JoinColumn(name="place_id", nullable=false)
-    private PlaceEntity place;
+
 
     public void assignPlace(PlaceEntity place) {
         this.place = place;

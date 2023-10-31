@@ -9,19 +9,23 @@ public class PlaceSearchFilter {
     private String city;
     private PlaceCategory category;
     private Long userId;
+    private String street;
 
 
 
-    private PlaceSearchFilter(Builder builder) {
+    public PlaceSearchFilter(Builder builder) {
         voivodeship = builder.voivodeship;
         city = builder.city;
         category = builder.category;
         userId = builder.userId;
-
+        street = builder.street;
     }
 
     public boolean isEmpty() {
-        return getCity().isEmpty() && getCategory().isEmpty() && getVoivodeship().isEmpty() && getUserId().isEmpty();
+        return getCity().isEmpty() &&
+                getCategory().isEmpty() &&
+                getVoivodeship().isEmpty() &&
+                getUserId().isEmpty();
     }
 
     public Optional<String> getVoivodeship() {
@@ -35,7 +39,9 @@ public class PlaceSearchFilter {
     public Optional<String> getCity() {
         return Optional.ofNullable(city);
     }
-
+    public Optional<String> getStreet() {
+        return Optional.ofNullable(street);
+    }
     public Optional<PlaceCategory> getCategory() {
         return Optional.ofNullable(category);
     }
@@ -43,6 +49,7 @@ public class PlaceSearchFilter {
     public static final class Builder {
         private String voivodeship;
         private String city;
+        private String street;
         private PlaceCategory category;
         private Long userId;
 
@@ -75,6 +82,11 @@ public class PlaceSearchFilter {
 
         public PlaceSearchFilter build() {
             return new PlaceSearchFilter(this);
+        }
+
+        public Builder street(String val) {
+            street = val;
+            return this;
         }
     }
 }

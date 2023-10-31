@@ -1,14 +1,17 @@
 package com.dpap.bookingapp.booking.place;
 
+import com.dpap.bookingapp.availability.service.AvailabilityService;
 import com.dpap.bookingapp.booking.common.JsonToCollectionMapper;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceEntity;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceRepository;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceResponse;
+import com.dpap.bookingapp.booking.place.exception.NotFoundPlaceException;
 import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.booking.place.room.UpdateRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dataaccess.RoomEntity;
 import com.dpap.bookingapp.booking.place.room.dto.AddRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dto.RoomDTO;
+import com.dpap.bookingapp.common.TimeSlot;
 import com.dpap.bookingapp.users.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,7 +23,6 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +32,15 @@ import static com.dpap.bookingapp.booking.common.JsonToCollectionMapper.deserial
 @Service
 public class PlaceService {
 
+    private final AvailabilityService availabilityService;
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
     private final RoomService roomService;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PlaceService(PlaceRepository placeRepository, UserRepository userRepository, RoomService roomService) {
+    public PlaceService(AvailabilityService availabilityService, PlaceRepository placeRepository, UserRepository userRepository, RoomService roomService) {
+        this.availabilityService = availabilityService;
         this.placeRepository = placeRepository;
         this.userRepository = userRepository;
         this.roomService = roomService;
@@ -44,7 +48,8 @@ public class PlaceService {
 
     @Transactional
     public void addPlace(AddPlaceRequest request, Long userId) {
-        var user = userRepository.findEntityById(userId).orElseThrow(() -> new RuntimeException("Not found user with id:" + userId));
+        var user = userRepository.findEntityById(userId)
+                .orElseThrow(() -> new RuntimeException("Not found user with id:" + userId));
         var place = Place.fromRequest(request, userId);
         PlaceEntity placeEntity = new PlaceEntity();
         placeEntity.setDescription(place.getDescription());
@@ -69,32 +74,40 @@ public class PlaceService {
         return typedQuery.getResultList().stream().map(this::mapToPlaceResponse).toList();
     }
 
-    public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter, RoomSearchFilter roomSearchFilter) {
-        if (filter.isEmpty()) {
-            return placeRepository.findAll().stream().map(this::mapToPlaceResponse).toList();
+    public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter, RoomSearchFilter roomSearchFilter, TimeSlot timeSlot) {
+        List<PlaceResponse> places = new ArrayList<>();
+        for (PlaceResponse place : findAllByFilters(filter, roomSearchFilter)) {
+            List<RoomDTO> rooms = new ArrayList<>();
+            place.rooms().forEach(
+                    roomDTO -> {
+                        if (availabilityService.isObjectAvailable(roomDTO.id(), timeSlot)) {
+                            rooms.add(roomDTO);
+                        }
+                    }
+            );
+            places.add(place.withRooms(rooms));
         }
-
-        TypedQuery<PlaceEntity> typedQuery = entityManager.createQuery(prepareQueryCriteriaBy(filter));
-        var places = typedQuery.getResultList();
-
-        return filterPlacesByRoomsParams(places, roomSearchFilter);
-
+        return places;
     }
 
-    private List<PlaceResponse> filterPlacesByRoomsParams(
-            List<PlaceEntity> places,
-            RoomSearchFilter roomSearchFilter) {
-
-        List<PlaceResponse> placeResponse = new ArrayList<>();
-        for (PlaceEntity place : places) {
-            placeResponse.add(
-                    this.mapToPlaceResponseWithRooms(
-                            place,
-                            roomSearchFilter.getPricePerNight().map(price -> place.findRoomsCheaperThan(BigDecimal.valueOf(price))).orElse(place.getRooms())
-                    )
-            );
+    public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter, RoomSearchFilter roomSearchFilter) {
+        List<PlaceEntity> places;
+        if (filter.isEmpty()) {
+            places = placeRepository.findAll();
+        } else {
+            TypedQuery<PlaceEntity> typedQuery = entityManager.createQuery(prepareQueryCriteriaBy(filter));
+            places = typedQuery.getResultList();
         }
-        return placeResponse;
+        if (roomSearchFilter.isEmpty()) {
+            return places.stream().map(this::mapToPlaceResponse).toList();
+        }
+        return filterPlacesByRoomParams(places, roomSearchFilter);
+    }
+
+    private List<PlaceResponse> filterPlacesByRoomParams(List<PlaceEntity> places, RoomSearchFilter roomSearchFilter) {
+        return places.stream()
+                .map(place -> this.mapToPlaceResponseWithRooms(place, place.findRoomsByFilter(roomSearchFilter)))
+                .toList();
     }
 
     private CriteriaQuery<PlaceEntity> prepareQueryCriteriaBy(PlaceSearchFilter filter) {
@@ -106,11 +119,13 @@ public class PlaceService {
         filter.getCategory().map(category -> predicates.add(cb.equal(from.get("category"), category)));
         filter.getVoivodeship().map(voivodeship -> predicates.add(cb.equal(from.get("address").get("voivodeship"), voivodeship)));
         filter.getCity().map(city -> predicates.add(cb.equal(from.get("address").get("city"), city)));
+        filter.getStreet().map(street -> predicates.add(cb.equal(from.get("address").get("street"), street)));
         filter.getUserId().map(userId -> predicates.add(cb.equal(from.get("user").get("id"), userId)));
 
-
-        criteriaQuery.select(from).where(cb.and(predicates.toArray(new Predicate[0])));
-        return criteriaQuery;
+        if (predicates.isEmpty()) {
+            return criteriaQuery;
+        }
+        return criteriaQuery.select(from).where(cb.and(predicates.toArray(new Predicate[0])));
     }
 
     public PlaceResponse findPlaceById(Long placeId) {
@@ -138,7 +153,7 @@ public class PlaceService {
                 .setParameter("userId", userId)
                 .getResultList()
                 .stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("Not found place with id: " + placeId));
+                .orElseThrow(() -> new NotFoundPlaceException("Not found place with id: " + placeId));
         var room = roomService.addRoom(request, place);
         place.addRoom(room);
     }
@@ -197,7 +212,6 @@ public class PlaceService {
 
     @Transactional
     public void updateRoomById(Long userId, Long placeId, Long roomId, UpdateRoomRequest request) {
-
         var room = entityManager.createQuery(
                         "SELECT r FROM RoomEntity r where r.id = :roomId AND r.place.id = :placeId AND r.place.user.id = :userId", RoomEntity.class)
                 .setParameter("placeId", placeId)
@@ -213,11 +227,9 @@ public class PlaceService {
             room.setFacilities(JsonToCollectionMapper.serialize(facilities));
         }
         if (request.pricePerNight() != null) {
-
             room.setPricePerNight(request.pricePerNight());
         }
         if (request.capacity() != null) {
-
             room.setCapacity(request.capacity());
         }
         if (request.name() != null) {
@@ -228,5 +240,4 @@ public class PlaceService {
         }
         entityManager.merge(room);
     }
-
 }

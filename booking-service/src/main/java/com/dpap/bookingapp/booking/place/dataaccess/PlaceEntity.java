@@ -1,16 +1,17 @@
 package com.dpap.bookingapp.booking.place.dataaccess;
 
 import com.dpap.bookingapp.booking.place.PlaceCategory;
+import com.dpap.bookingapp.booking.place.RoomSearchFilter;
 import com.dpap.bookingapp.booking.place.room.dataaccess.RoomEntity;
 import com.dpap.bookingapp.users.UserEntity;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 @Entity
 @Table(name = "places")
@@ -121,11 +122,13 @@ public class PlaceEntity {
         this.rooms.remove(room);
     }
 
-    public List<RoomEntity> findRoomsCheaperThan(BigDecimal value) {
+    public List<RoomEntity> findRoomsByFilter(RoomSearchFilter roomSearchFilter) {
+        List<Predicate<RoomEntity>> predicates = new ArrayList<>();
+        roomSearchFilter.getCapacity().map(capacity -> predicates.add(room -> Objects.equals(room.getCapacity(), capacity)));
+        roomSearchFilter.getPricePerNight().map(price -> predicates.add(room -> room.getPricePerNight() <= price));
         return this.rooms
                 .stream()
-                .filter(roomEntity -> new BigDecimal(roomEntity.getPricePerNight()).setScale(2, RoundingMode.UP).compareTo(value.setScale(2, RoundingMode.UP)) > 0)
+                .filter(predicates.stream().reduce(w -> true, Predicate::and))
                 .toList();
     }
-
 }

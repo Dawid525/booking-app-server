@@ -4,6 +4,7 @@ import com.dpap.bookingapp.auth.AuthenticationService;
 import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@Tag(name="Reservations")
 @RequestMapping("/reservations")
 public class ReservationController {
 
     private final ReservationService service;
+    private final ReservationOwnerService reservationOwnerService;
     private final AuthenticationService authenticationService;
 
-    public ReservationController(ReservationService service, AuthenticationService authenticationService) {
+    public ReservationController(ReservationService service,
+                                 ReservationOwnerService reservationOwnerService,
+                                 AuthenticationService authenticationService) {
         this.service = service;
+        this.reservationOwnerService = reservationOwnerService;
         this.authenticationService = authenticationService;
     }
 
@@ -35,7 +41,6 @@ public class ReservationController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Reservation>> fetchReservations(
             @RequestParam(value = "userId", required = false) Long userId,
             @RequestParam(value = "roomId", required = false) Long roomId,
@@ -48,7 +53,6 @@ public class ReservationController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<Reservation>> fetchMyReservations(
             @RequestParam(value = "from", required = false) LocalDateTime from,
             @RequestParam(value = "placeId", required = false) Long placeId,
@@ -58,16 +62,14 @@ public class ReservationController {
         return ResponseEntity.ok(service.findReservations(filter));
     }
 
-    @GetMapping("/acceptance")
+    @GetMapping("/confirmation")
     public ResponseEntity<List<Reservation>> fetchReservationsToConfirm() {
-//        var filter = new SearchReservationFilter(, null, null, ReservationState.WAITING, null, null);
         return ResponseEntity.ok(service.findAllToAccept(authenticationService.getLoggedUser().id()));
     }
 
     @PutMapping("/{id}/confirmation")
     public ResponseEntity<?> confirm(@PathVariable Long id) {
-
-        service.confirmReservation(authenticationService.getLoggedUser().id(), id);
+        reservationOwnerService.confirmReservation(authenticationService.getLoggedUser().id(), id);
         return ResponseEntity.status(204).build();
     }
 

@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class JsonToCollectionMapper {
-
     private static ObjectMapper objectMapper;
 
     static {
@@ -21,7 +20,14 @@ public class JsonToCollectionMapper {
             return new HashSet<>();
         }
         try {
-            Set<String> set =  objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(Set.class, String.class));
+            Set<String> set =
+                    objectMapper
+                            .readValue(
+                                    json,
+                                    objectMapper
+                                            .getTypeFactory()
+                                            .constructCollectionType(Set.class, String.class)
+                            );
             return set.stream()
                     .map(FacilityType::valueOf)
                     .collect(Collectors.toSet());
@@ -40,5 +46,4 @@ public class JsonToCollectionMapper {
             throw new RuntimeException(e);
         }
     }
-
 }

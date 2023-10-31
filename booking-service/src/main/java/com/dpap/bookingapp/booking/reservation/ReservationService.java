@@ -2,12 +2,16 @@ package com.dpap.bookingapp.booking.reservation;
 
 
 import com.dpap.bookingapp.availability.service.AvailabilityService;
+import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
 import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
 import com.dpap.bookingapp.common.TimeSlot;
+import com.dpap.bookingapp.notification.NotificationService;
+import com.dpap.bookingapp.notification.NotificationServiceImpl;
+import com.dpap.bookingapp.notification.NotificationTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +26,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
 
-    public ReservationService(AvailabilityService availabilityService, ReservationRepository reservationRepository, RoomService roomService) {
+    public ReservationService(AvailabilityService availabilityService, ReservationRepository reservationRepository, RoomService roomService, NotificationService notificationService, PlaceService placeService) {
         this.availabilityService = availabilityService;
         this.reservationRepository = reservationRepository;
         this.roomService = roomService;
@@ -51,12 +55,6 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public void confirmReservation(Long userId, Long reservationId) {
-        var reservation = findByIdAndUserId(reservationId, userId);
-        reservation.confirm();
-        reservationRepository.updateState(reservation.getId(), reservation.getState());
-    }
-
 
     public void checkInReservation(Long userId, Long reservationId) {
         var reservation = findByIdAndUserId(reservationId, userId);
@@ -73,14 +71,12 @@ public class ReservationService {
 
     public void cancelReservation(Long reservationId, Long userId) {
         var reservation = findByIdAndUserId(reservationId, userId);
-        ;
         reservation.cancel(LocalDateTime.now());
         reservationRepository.updateState(reservation.getId(), reservation.getState());
     }
 
     public void addCost(Long reservationId, Long userId, FeeRequest feeRequest) {
         var reservation = findByIdAndUserId(reservationId, userId);
-        ;
         reservation.addCost(feeRequest.value());
     }
 
@@ -121,7 +117,7 @@ public class ReservationService {
 //                room,
 //                findFreeSlotsIn(roomId, from, to, 22)
 //        ); //TODO XX
-//    }
+//    }fca
 
     public boolean checkRoomAvailability(RoomId id, TimeSlot timeSlot) {
         return availabilityService.isObjectAvailable(id.getId(), timeSlot);

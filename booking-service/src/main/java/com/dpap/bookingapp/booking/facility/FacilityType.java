@@ -11,5 +11,4 @@ public enum FacilityType {
     COFFEE,
     TWIN_BED,
     SINGLE_BED
-
 }

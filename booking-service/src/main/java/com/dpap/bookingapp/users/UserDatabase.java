@@ -16,4 +16,8 @@ public interface UserDatabase {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+    void changeEmail(String email, Long userId);
+    void changePassword(String email, Long userId);
+
+    void changeUsername(String email, Long id);
 }

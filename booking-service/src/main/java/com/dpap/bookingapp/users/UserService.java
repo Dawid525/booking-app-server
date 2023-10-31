@@ -4,7 +4,10 @@ import com.dpap.bookingapp.users.dto.EmailRequest;
 import com.dpap.bookingapp.users.dto.PasswordRequest;
 import com.dpap.bookingapp.users.dto.RegisterUserRequest;
 import com.dpap.bookingapp.users.dto.UserQueryDto;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserDatabase userDatabase;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserDatabase userDatabase) {
+    public UserService(UserDatabase userDatabase, PasswordEncoder passwordEncoder) {
         this.userDatabase = userDatabase;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserQueryDto> getAllUsers() {
@@ -31,10 +36,16 @@ public class UserService {
         return user.map(value -> new UserQueryDto(value.getId(), value.getUsername()));
     }
 
-    public void changeEmail(EmailRequest emailRequest) {
+    @Transactional
+    public void changeEmail(EmailRequest emailRequest, UserQueryDto loggedUser) {
+        if (!userDatabase.existsByEmail(emailRequest.email()))
+            userDatabase.changeEmail(emailRequest.email(), loggedUser.id());
+            userDatabase.changeUsername(emailRequest.email(), loggedUser.id());
     }
 
-    public void changePassword(PasswordRequest passwordRequest) {
+    @Transactional
+    public void changePassword(PasswordRequest passwordRequest, UserQueryDto loggedUser) {
+        userDatabase.changePassword(passwordEncoder.encode(passwordRequest.password()), loggedUser.id());
     }
 
     public void takeAdminRoleFromUser(String username) {

@@ -23,7 +23,7 @@ public class ReservationRepository implements ReservationDatabase {
 
     private static final String FIND_BY_ID =
             """
-                    SELECT r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at, r.value, r.free_cancellation_days
+                    SELECT r.id,r.place_id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at, r.value, r.free_cancellation_days
                     FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
                     WHERE r.id = ?
                     """;
@@ -35,11 +35,11 @@ public class ReservationRepository implements ReservationDatabase {
                     """;
     private static final String FIND_ALL =
             """
-                    SELECT r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at,r.value, r.free_cancellation_days
+                    SELECT r.id, r.place_id,r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at,r.value, r.free_cancellation_days
                     FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
                     """;
     private static final String FIND_RESERVATION_BY_ROOM_ID_BETWEEN_DATES = """
-            SELECT r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at,r.value, r.free_cancellation_days
+            SELECT r.id, r.start, r.place_id, r.finish, rs.name AS state, r.user_id, r.room_id, r.at,r.value, r.free_cancellation_days
             FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
             WHERE r.room_id = ?
              AND r.start <= ?
@@ -65,11 +65,10 @@ public class ReservationRepository implements ReservationDatabase {
             """;
     private static final String FIND_BY_ID_AND_USER_ID =
             """
-                    SELECT r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at, r.value, r.free_cancellation_days
-                    FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
-                    WHERE r.id = ? AND r.user_id = ?
+                                                        SELECT r.place_id, r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at, r.value, r.free_cancellation_days
+                            FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
+                            WHERE r.id = ? AND r.user_id = ?
                     """;
-    ;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -99,10 +98,6 @@ public class ReservationRepository implements ReservationDatabase {
     }
 
     public List<Reservation> findAllToAccept(Long hostId) {
-
-        System.out.println(FIND_TO_ACCEPT);
-        System.out.println(hostId);
-
         return jdbcTemplate.query(
                 FIND_TO_ACCEPT,
                 reservationRowMapper(),
@@ -142,8 +137,8 @@ public class ReservationRepository implements ReservationDatabase {
         query.append(filter.getUserId().map(id -> "r.user_id= ? AND ").orElse(""));
         query.append(filter.getPlaceId().map(id -> "r.place_id= ? AND ").orElse(""));
         query.append(filter.getState().map(state -> "rs.name= ? AND ").orElse(""));
-        query.append(filter.getFrom().map(from -> "r.start <= ? AND ").orElse(""));
-        query.append(filter.getTo().map(to -> "r.finish= ? AND ").orElse(""));
+        query.append(filter.getFrom().map(from -> "r.finish >= ? AND ").orElse(""));
+        query.append(filter.getTo().map(to -> "r.start <= ? AND ").orElse(""));
         query.replace(query.lastIndexOf(" AND"), query.lastIndexOf(" AND") + 4, "");
         return query.toString();
     }
@@ -183,14 +178,12 @@ public class ReservationRepository implements ReservationDatabase {
                 .getOrElse(none());
     }
 
-    public void save(
-            Reservation reservation
-    ) {
+    public void save(Reservation reservation) {
         this.jdbcTemplate.update(
                 RESERVE_ROOM,
                 reservation.getRoomId().getId(),
-                reservation.getUserId(),
                 reservation.getPlaceId(),
+                reservation.getUserId(),
                 reservation.getCheckIn(),
                 reservation.getCheckOut(),
                 reservation.getAt(),

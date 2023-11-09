@@ -1,6 +1,5 @@
 package com.dpap.bookingapp.reviews;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -16,10 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/places")
-@Tag(name="Places")
-
+@Tag(name = "Places")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PlaceController {
-
 
     private final PlaceService placeService;
     private final AuthenticationService authenticationService;
@@ -43,7 +42,6 @@ public class PlaceController {
     public ResponseEntity<List<PlaceResponse>> fetchAllPlaceEntitiesWithFilters(
             @RequestParam(required = false) String voivodeship,
             @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) Long placeId,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String street,
             @RequestParam(required = false) PlaceCategory category,

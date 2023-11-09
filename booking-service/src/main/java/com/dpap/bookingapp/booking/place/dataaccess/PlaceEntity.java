@@ -37,13 +37,13 @@ public class PlaceEntity {
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<RoomEntity> rooms = new ArrayList<>();
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private String facilities;
 
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<RoomEntity> rooms = new ArrayList<>();
 
     public String getName() {
         return name;

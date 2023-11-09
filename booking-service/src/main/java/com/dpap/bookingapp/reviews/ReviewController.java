@@ -25,8 +25,8 @@ public class ReviewController {
         return ResponseEntity.status(201).build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Review>> getReviews(@RequestParam Long placeId) {
+    @GetMapping("/places/{placeId}")
+    public ResponseEntity<List<Review>> getReviews(@PathVariable Long placeId) {
         return ResponseEntity.ok(reviewService.getReviewsForPlace(placeId));
     }
 

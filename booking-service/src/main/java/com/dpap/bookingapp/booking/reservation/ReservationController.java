@@ -6,14 +6,14 @@ import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@CrossOrigin("http://localhost:4200")
 @RestController
-@Tag(name="Reservations")
+@Tag(name = "Reservations")
 @RequestMapping("/reservations")
 public class ReservationController {
 

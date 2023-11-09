@@ -4,6 +4,7 @@ import com.dpap.bookingapp.users.dto.EmailRequest;
 import com.dpap.bookingapp.users.dto.PasswordRequest;
 import com.dpap.bookingapp.users.dto.RegisterUserRequest;
 import com.dpap.bookingapp.users.dto.UserQueryDto;
+import com.dpap.bookingapp.users.web.UserDetailsDTO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,10 @@ public class UserService {
         var user = userDatabase.findByUsername(username);
         return user.map(value -> new UserQueryDto(value.getId(), value.getUsername()));
     }
-
+    public UserDetailsDTO findDetailsByUsername(String username) {
+        var user = userDatabase.findByUsername(username);
+        return user.map(value -> new UserDetailsDTO(value.getId(), value.getUsername(), value.getFirstname(), value.getLastname())).get();
+    }
     @Transactional
     public void changeEmail(EmailRequest emailRequest, UserQueryDto loggedUser) {
         if (!userDatabase.existsByEmail(emailRequest.email()))

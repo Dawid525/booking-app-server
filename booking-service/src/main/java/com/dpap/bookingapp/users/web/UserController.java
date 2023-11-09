@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:4200")
 @Tag(name = "Users")
 class UserController {
 
@@ -40,9 +40,9 @@ class UserController {
     }
 
     @GetMapping("/me/info")
-    ResponseEntity<UserQueryDto> getInfoAboutMe() {
+    ResponseEntity<UserDetailsDTO> getInfoAboutMe() {
         var user = authenticationUserService.getLoggedUser();
-        return ResponseEntity.ok(userService.findByUsername(user.username()).get());
+        return ResponseEntity.ok(userService.findDetailsByUsername(user.username()));
 
     }
 

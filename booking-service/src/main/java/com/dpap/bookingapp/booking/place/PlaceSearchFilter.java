@@ -22,7 +22,7 @@ public class PlaceSearchFilter {
     }
 
     public boolean isEmpty() {
-        return getCity().isEmpty() &&
+        return getCity().isEmpty() && getStreet().isEmpty() &&
                 getCategory().isEmpty() &&
                 getVoivodeship().isEmpty() &&
                 getUserId().isEmpty();

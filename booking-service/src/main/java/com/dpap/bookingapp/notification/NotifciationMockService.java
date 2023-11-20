@@ -13,6 +13,5 @@ public class NotifciationMockService implements NotificationService{
 
     @Override
     public void sendNotification(Long userId, NotificationTemplate template) {
-        System.out.println("XDD");
     }
 }

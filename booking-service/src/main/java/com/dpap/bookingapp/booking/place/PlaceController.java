@@ -4,7 +4,7 @@ import com.dpap.bookingapp.auth.AuthenticationService;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceResponse;
 import com.dpap.bookingapp.booking.place.room.UpdateRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dto.AddRoomRequest;
-import com.dpap.bookingapp.common.TimeSlot;
+import com.dpap.bookingapp.timeslot.TimeSlot;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;

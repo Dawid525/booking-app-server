@@ -16,7 +16,6 @@ public record AddPlaceRequest(
         Address address,
         @NotNull
         PlaceCategory category,
-        @NotEmpty
         List<AddRoomRequest> rooms
 ) {
 }

@@ -11,7 +11,7 @@ import com.dpap.bookingapp.booking.place.room.UpdateRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dataaccess.RoomEntity;
 import com.dpap.bookingapp.booking.place.room.dto.AddRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dto.RoomDTO;
-import com.dpap.bookingapp.common.TimeSlot;
+import com.dpap.bookingapp.timeslot.TimeSlot;
 import com.dpap.bookingapp.users.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -39,7 +39,8 @@ public class PlaceService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PlaceService(AvailabilityService availabilityService, PlaceRepository placeRepository, UserRepository userRepository, RoomService roomService) {
+    public PlaceService(AvailabilityService availabilityService,
+                        PlaceRepository placeRepository, UserRepository userRepository, RoomService roomService) {
         this.availabilityService = availabilityService;
         this.placeRepository = placeRepository;
         this.userRepository = userRepository;

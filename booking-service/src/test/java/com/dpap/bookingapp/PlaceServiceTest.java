@@ -2,7 +2,6 @@ package com.dpap.bookingapp;
 
 import com.dpap.bookingapp.availability.service.AvailabilityService;
 import com.dpap.bookingapp.booking.place.PlaceCategory;
-import com.dpap.bookingapp.booking.place.PlaceSearchFilter;
 import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.dataaccess.Address;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceEntity;
@@ -11,15 +10,12 @@ import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.users.UserEntity;
 import com.dpap.bookingapp.users.UserRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

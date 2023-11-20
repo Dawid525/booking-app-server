@@ -8,10 +8,8 @@ import com.dpap.bookingapp.booking.place.room.dto.RoomId;
 import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
-import com.dpap.bookingapp.common.TimeSlot;
 import com.dpap.bookingapp.notification.NotificationService;
-import com.dpap.bookingapp.notification.NotificationServiceImpl;
-import com.dpap.bookingapp.notification.NotificationTemplate;
+import com.dpap.bookingapp.timeslot.TimeSlot;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

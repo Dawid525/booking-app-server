@@ -1,10 +1,9 @@
-package com.dpap.bookingapp.common;
+package com.dpap.bookingapp.timeslot;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 
 public class TimeSlot {
 

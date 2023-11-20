@@ -3,6 +3,7 @@ package com.dpap.bookingapp.booking.reservation;
 import com.dpap.bookingapp.auth.AuthenticationService;
 import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
+import com.dpap.bookingapp.booking.reservation.dto.ReservationDto;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -53,18 +54,31 @@ public class ReservationController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<Reservation>> fetchMyReservations(
+    public ResponseEntity<List<ReservationDto>> fetchMyReservations(
             @RequestParam(value = "from", required = false) LocalDateTime from,
             @RequestParam(value = "placeId", required = false) Long placeId,
             @RequestParam(value = "state", required = false) ReservationState state,
             @RequestParam(value = "to", required = false) LocalDateTime to) {
         var filter = new SearchReservationFilter(authenticationService.getLoggedUser().id(), placeId, null, state, from, to);
-        return ResponseEntity.ok(service.findReservations(filter));
+        return ResponseEntity.ok(service.findReservations(filter).stream()
+                .map(r -> new ReservationDto(
+                        r.getId(),
+                        r.getRoomId(), r.getPlaceId(),
+                        r.getCheckIn().toString(), r.getCheckOut().toString(),
+                        r.getAt().toString(), r.getUserId(), r.getState(), r.getValue(), 14)
+                ).toList());
     }
 
     @GetMapping("/confirmation")
-    public ResponseEntity<List<Reservation>> fetchReservationsToConfirm() {
-        return ResponseEntity.ok(service.findAllToAccept(authenticationService.getLoggedUser().id()));
+    public ResponseEntity<List<ReservationDto>> fetchReservationsToConfirm() {
+        return ResponseEntity.ok(service.findAllToAccept(authenticationService.getLoggedUser().id())
+                .stream()
+                .map(r -> new ReservationDto(
+                        r.getId(),
+                        r.getRoomId(), r.getPlaceId(),
+                        r.getCheckIn().toString(), r.getCheckOut().toString(),
+                        r.getAt().toString(), r.getUserId(), r.getState(), r.getValue(), 14)
+                ).toList());
     }
 
     @PutMapping("/{id}/confirmation")

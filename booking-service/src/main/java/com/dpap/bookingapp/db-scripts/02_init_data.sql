@@ -114,7 +114,7 @@ VALUES (1, 'CONFIRMED'),
        (2, 'CHECK_IN'),
        (3, 'CHECK_OUT'),
        (4, 'WAITING'),
-       (5, 'CANCELED'),
+       (5, 'CANCELLED'),
        (6, 'PAID');
 
 INSERT INTO reservations

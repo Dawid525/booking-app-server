@@ -47,7 +47,7 @@ public class InMemoryReservationRepository implements ReservationDatabase {
     public void updateState(Long reservationId, ReservationState state) {
         var reservation = reservations.get(reservationId);
         switch (state) {
-            case CANCELED -> reservation.cancel(LocalDateTime.now());
+            case CANCELLED -> reservation.cancel(LocalDateTime.now());
             case CONFIRMED -> reservation.confirm();
             case CHECK_IN -> reservation.checkIn();
             case CHECK_OUT -> reservation.checkOut();

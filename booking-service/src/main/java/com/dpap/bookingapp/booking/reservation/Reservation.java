@@ -2,7 +2,8 @@ package com.dpap.bookingapp.booking.reservation;
 
 
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
-import com.dpap.bookingapp.common.TimeSlot;
+import com.dpap.bookingapp.timeslot.TimeSlot;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,8 +14,11 @@ public class Reservation {
     private Long id;
     private RoomId roomId;
     private Long placeId;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime checkIn;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime checkOut;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime at;
     private Long userId;
     private ReservationState state;
@@ -81,7 +85,7 @@ public class Reservation {
             throw new RuntimeException("You must not cancel reservation");
         }
         this.value = calculateCost(value, when);
-        this.state = ReservationState.CANCELED;
+        this.state = ReservationState.CANCELLED;
     }
 
     public void confirm() {

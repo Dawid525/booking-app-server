@@ -1,6 +1,6 @@
 package com.dpap.bookingapp.availability.service;
 
-import com.dpap.bookingapp.common.TimeSlot;
+import com.dpap.bookingapp.timeslot.TimeSlot;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

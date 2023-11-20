@@ -4,20 +4,20 @@ import java.time.LocalDateTime;
 
 public class NotificationTemplate {
 
-    private final String name;
+    private final String content;
     private final Long reservationId;
     private final LocalDateTime from;
     private final LocalDateTime to;
 
-    public NotificationTemplate(String name, Long reservationId, LocalDateTime from, LocalDateTime to) {
-        this.name = name;
+    public NotificationTemplate(String content, Long reservationId, LocalDateTime from, LocalDateTime to) {
+        this.content = content;
         this.reservationId = reservationId;
         this.from = from;
         this.to = to;
     }
 
-    public String getName() {
-        return name;
+    public String getContent() {
+        return content;
     }
 
     public Long getReservationId() {

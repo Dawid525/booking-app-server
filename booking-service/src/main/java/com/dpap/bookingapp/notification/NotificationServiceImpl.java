@@ -22,7 +22,7 @@ public class NotificationServiceImpl implements NotificationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userService.findByUserId(userId).orElseThrow(() -> new RuntimeException("")).getEmail());
         message.setSubject("Reservation: " + template.getReservationId() + " updated.");
-        message.setText(template.getName());
+        message.setText(template.getContent());
         javaMailSender.send(message);
     }
 
@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);
         message.setSubject("Reservation:" + template.getReservationId() + " updated.");
-        message.setText(template.getName());
+        message.setText(template.getContent());
 
         javaMailSender.send(message);
     }

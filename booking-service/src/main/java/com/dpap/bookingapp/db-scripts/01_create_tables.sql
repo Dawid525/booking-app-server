@@ -4,6 +4,7 @@ CREATE SEQUENCE seq_room_details START 1;
 CREATE SEQUENCE seq_reservations START 1;
 CREATE SEQUENCE seq_accommodations START 1;
 CREATE SEQUENCE seq_users START 1;
+CREATE SEQUENCE seq_images START 1;
 CREATE SEQUENCE seq_accommodations_rooms START 1;
 CREATE SEQUENCE seq_availabilities START 1 INCREMENT BY 1;;
 CREATE SEQUENCE seq_reviews START 1 INCREMENT BY 1;;
@@ -114,8 +115,14 @@ CREATE TABLE reservations
     free_cancellation_days INT,
     FOREIGN KEY (state_id) REFERENCES reservation_states (id),
     FOREIGN KEY (room_id) REFERENCES rooms (id),
-    FOREIGN KEY (place_id) REFERENCES rooms (id),
+    FOREIGN KEY (place_id) REFERENCES places (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
+);
+CREATE TABLE images
+(
+    id                     INT PRIMARY KEY NOT NULL,
+    place_id               INT             NOT NULL,
+    url text
 );
 -- CREATE TABLE accommodations
 -- (

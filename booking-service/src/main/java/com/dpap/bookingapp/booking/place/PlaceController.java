@@ -37,11 +37,15 @@ public class PlaceController {
     public ResponseEntity<List<PlaceResponse>> findAllPlaceEntities() {
         return ResponseEntity.ok(placeService.findAll());
     }
-
+    @GetMapping("/{placeId}/details")
+    public ResponseEntity<PlaceResponse> findPlaceDetailsById(@PathVariable Long placeId) {
+        return ResponseEntity.ok(placeService.findPlaceById(placeId));
+    }
     @GetMapping("/filters")
     public ResponseEntity<List<PlaceResponse>> fetchAllPlaceEntitiesWithFilters(
             @RequestParam(required = false) String voivodeship,
             @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long placeId,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String street,
             @RequestParam(required = false) PlaceCategory category,
@@ -52,6 +56,7 @@ public class PlaceController {
         var placeSearchFilter = PlaceSearchFilter.Builder.newBuilder()
                 .voivodeship(voivodeship)
                 .userId(userId)
+                .placeId(placeId)
                 .street(street)
                 .city(city)
                 .category(category).build();

@@ -1,5 +1,6 @@
 package com.dpap.bookingapp.reviews;
 
+import com.dpap.bookingapp.users.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,18 +10,31 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final UserService userService;
 
-    public ReviewService(ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository, UserService userService) {
         this.reviewRepository = reviewRepository;
+        this.userService = userService;
     }
 
-    public void createReview(String content, Long reservationId, Long userId, Rating rating) {
-        Review review = new Review(content, rating, reservationId, userId, LocalDateTime.now());
+    public void createReview(String content, Long placeId, Long userId, int rating) {
+        Review review = new Review(content, rating, placeId, userId, LocalDateTime.now());
         reviewRepository.save(review);
     }
 
-    public List<Review> getReviewsForPlace(Long reservationId) {
-        return reviewRepository.findAllByPlaceId(reservationId);
+    private List<Review> getReviewsForPlace(Long placeId) {
+        return reviewRepository.findAllByPlaceId(placeId);
+    }
+
+    public List<ReviewDto> getReviewDtosForPlace(Long placeId) {
+        return reviewRepository.findAllByPlaceId(placeId)
+                .stream().map(review -> new ReviewDto(
+                        review.getRating(),
+                        userService.findByUserId(review.getUserId()).get().getEmail(),
+                        review.getContent(),
+                        review.getPlaceId()
+                ))
+                .toList();
     }
 
     @Transactional

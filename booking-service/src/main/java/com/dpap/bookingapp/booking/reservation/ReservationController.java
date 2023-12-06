@@ -19,14 +19,14 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService service;
-    private final ReservationOwnerService reservationOwnerService;
+    private final ReservationHostService reservationHostService;
     private final AuthenticationService authenticationService;
 
     public ReservationController(ReservationService service,
-                                 ReservationOwnerService reservationOwnerService,
+                                 ReservationHostService reservationHostService,
                                  AuthenticationService authenticationService) {
         this.service = service;
-        this.reservationOwnerService = reservationOwnerService;
+        this.reservationHostService = reservationHostService;
         this.authenticationService = authenticationService;
     }
 
@@ -69,29 +69,13 @@ public class ReservationController {
                 ).toList());
     }
 
-    @GetMapping("/confirmation")
-    public ResponseEntity<List<ReservationDto>> fetchReservationsToConfirm() {
-        return ResponseEntity.ok(service.findAllToAccept(authenticationService.getLoggedUser().id())
-                .stream()
-                .map(r -> new ReservationDto(
-                        r.getId(),
-                        r.getRoomId(), r.getPlaceId(),
-                        r.getCheckIn().toString(), r.getCheckOut().toString(),
-                        r.getAt().toString(), r.getUserId(), r.getState(), r.getValue(), 14)
-                ).toList());
-    }
-
-    @PutMapping("/{id}/confirmation")
-    public ResponseEntity<?> confirm(@PathVariable Long id) {
-        reservationOwnerService.confirmReservation(authenticationService.getLoggedUser().id(), id);
-        return ResponseEntity.status(204).build();
-    }
 
     @PutMapping("/{id}/cancellation")
     public ResponseEntity<?> cancel(@PathVariable Long id) {
         service.cancelReservation(id, authenticationService.getLoggedUser().id());
         return ResponseEntity.status(204).build();
     }
+
 
     @PutMapping("/{id}/check-in")
     public ResponseEntity<?> checkIn(@PathVariable Long id) {
@@ -111,20 +95,40 @@ public class ReservationController {
         return ResponseEntity.status(204).build();
     }
 
-//TODO xd
-//    @GetMapping("/rooms/{roomId}/availability")
-//    public ResponseEntity<RoomDTO> getRoomAvailability(
-//            @RequestParam LocalDateTime from,
-//            @RequestParam LocalDateTime to,
-//            @PathVariable Long roomId) {
-//        return ResponseEntity.ok(service.findRoomAvailability(RoomId.fromLong(roomId), from, to));
-//    }
-//
-//
-//    @GetMapping("/rooms/free")
-//    public ResponseEntity<List<Room>> getAllAvailableRooms(
-//            @RequestParam LocalDateTime from,
-//            @RequestParam LocalDateTime to) {
-//        return ResponseEntity.ok(service.findAvailableRooms(from, to));
-//    }
+    @GetMapping("/offers")
+    public ResponseEntity<List<ReservationDto>> fetchMyOffers() {
+        return ResponseEntity.ok(reservationHostService.findAllOffers(authenticationService.getLoggedUser().id())
+                .stream()
+                .map(r -> new ReservationDto(
+                        r.getId(),
+                        r.getRoomId(), r.getPlaceId(),
+                        r.getCheckIn().toString(), r.getCheckOut().toString(),
+                        r.getAt().toString(), r.getUserId(), r.getState(), r.getValue(), 14)
+                ).toList());
+    }
+
+    @GetMapping("/confirmation")
+    public ResponseEntity<List<ReservationDto>> fetchReservationsToConfirm() {
+        return ResponseEntity.ok(reservationHostService.findAllOffers(authenticationService.getLoggedUser().id())
+                .stream()
+                .map(r -> new ReservationDto(
+                        r.getId(),
+                        r.getRoomId(), r.getPlaceId(),
+                        r.getCheckIn().toString(), r.getCheckOut().toString(),
+                        r.getAt().toString(), r.getUserId(), r.getState(), r.getValue(), 14)
+                ).toList());
+    }
+
+    @PutMapping("/{id}/confirmation")
+    public ResponseEntity<?> confirm(@PathVariable Long id) {
+        reservationHostService.confirmReservation(authenticationService.getLoggedUser().id(), id);
+        return ResponseEntity.status(204).build();
+    }
+
+    @PutMapping("/offers/{id}/cancellation")
+    public ResponseEntity<?> cancelOffer(@PathVariable Long id) {
+        reservationHostService.cancelOffer(id, authenticationService.getLoggedUser().id());
+        return ResponseEntity.status(204).build();
+    }
+
 }

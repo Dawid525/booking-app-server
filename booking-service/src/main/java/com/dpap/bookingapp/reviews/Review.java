@@ -15,8 +15,8 @@ public class Review {
     private String content;
     private Long placeId;
     private Long userId;
-    @Enumerated(EnumType.ORDINAL)
-    private Rating rating;
+//    @Enumerated(EnumType.ORDINAL)
+    private int rating;
     private LocalDateTime at;
 
     public LocalDateTime getAt() {
@@ -27,7 +27,7 @@ public class Review {
         this.at = at;
     }
 
-    public Review(String content, Rating rating, Long placeId, Long userId, LocalDateTime at) {
+    public Review(String content, int rating, Long placeId, Long userId, LocalDateTime at) {
         this.content = content;
         this.at = at;
         this.placeId = placeId;
@@ -42,12 +42,9 @@ public class Review {
         return id;
     }
 
-    public Rating getRating() {
-        return rating;
-    }
 
-    public void setRating(Rating rating) {
-        this.rating = rating;
+    public int getRating() {
+        return rating;
     }
 
     public void setId(Long id) {

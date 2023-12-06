@@ -10,6 +10,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/reviews")
 @Tag(name = "Reviews")
+@CrossOrigin("http://localhost:4200")
+
 public class ReviewController {
     private final ReviewService reviewService;
     private final AuthenticationService authenticationService;
@@ -26,8 +28,8 @@ public class ReviewController {
     }
 
     @GetMapping("/places/{placeId}")
-    public ResponseEntity<List<Review>> getReviews(@PathVariable Long placeId) {
-        return ResponseEntity.ok(reviewService.getReviewsForPlace(placeId));
+    public ResponseEntity<List<ReviewDto>> getReviews(@PathVariable Long placeId) {
+        return ResponseEntity.ok(reviewService.getReviewDtosForPlace(placeId));
     }
 
     @DeleteMapping

@@ -69,15 +69,6 @@ public class PlaceServiceTest {
         assertThrows(RuntimeException.class, () -> placeService.findPlaceById(1L));
     }
 
-//    @Test
-//    public void shouldI() {
-//        when();
-//        Query query = Mockito.mock(Query.class);
-//
-//        Mockito.when(entityManager.createQuery(Mockito.anyString())).thenReturn(query);
-//        Mockito.when(query.getResultList()).thenReturn(new ArrayList<>());
-//        var result = placeService.findAllByFilters(PlaceSearchFilter.Builder.newBuilder().category(PlaceCategory.HOTEL).build());
-//        System.out.println(result);
-//    }
+
 
 }

@@ -72,7 +72,7 @@ public class PlaceService {
             return placeRepository.findAll().stream().map(this::mapToPlaceResponse).toList();
         }
         TypedQuery<PlaceEntity> typedQuery = entityManager.createQuery(prepareQueryCriteriaBy(filter));
-        return typedQuery.getResultList().stream().map(this::mapToPlaceResponse).toList();
+        return typedQuery.getResultList().stream().map(this::mapToPlaceResponse).filter(room -> room.rooms().size() > 0).toList();
     }
 
     public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter, RoomSearchFilter roomSearchFilter, TimeSlot timeSlot) {
@@ -102,7 +102,7 @@ public class PlaceService {
         if (roomSearchFilter.isEmpty()) {
             return places.stream().map(this::mapToPlaceResponse).toList();
         }
-        return filterPlacesByRoomParams(places, roomSearchFilter);
+        return filterPlacesByRoomParams(places, roomSearchFilter).stream().filter(room -> room.rooms().size() > 0).toList();
     }
 
     private List<PlaceResponse> filterPlacesByRoomParams(List<PlaceEntity> places, RoomSearchFilter roomSearchFilter) {
@@ -118,6 +118,7 @@ public class PlaceService {
         List<Predicate> predicates = new ArrayList<>();
 
         filter.getCategory().map(category -> predicates.add(cb.equal(from.get("category"), category)));
+        filter.getPlaceId().map(placeId -> predicates.add(cb.equal(from.get("id"), placeId)));
         filter.getVoivodeship().map(voivodeship -> predicates.add(cb.equal(from.get("address").get("voivodeship"), voivodeship)));
         filter.getCity().map(city -> predicates.add(cb.equal(from.get("address").get("city"), city)));
         filter.getStreet().map(street -> predicates.add(cb.equal(from.get("address").get("street"), street)));
@@ -180,6 +181,7 @@ public class PlaceService {
                 placeEntity.getAddress(),
                 placeEntity.getCategory(),
                 placeEntity.getUser().getId(),
+                placeEntity.getRooms().stream().mapToInt(room -> room.getPricePerNight().intValue()).min().orElse(0),
                 placeEntity.getRooms().stream().map(this::mapToRoomResponse).collect(Collectors.toList()),
                 deserialize(placeEntity.getFacilities()).stream().toList()
         );
@@ -194,6 +196,7 @@ public class PlaceService {
                 placeEntity.getAddress(),
                 placeEntity.getCategory(),
                 placeEntity.getUser().getId(),
+                rooms.stream().mapToInt(room -> room.getPricePerNight().intValue()).min().orElse(0),
                 rooms.stream().map(this::mapToRoomResponse).collect(Collectors.toList()),
                 deserialize(placeEntity.getFacilities()).stream().toList()
         );

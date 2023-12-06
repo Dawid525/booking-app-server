@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -125,7 +126,5 @@ public class ReservationService {
         return reservationRepository.findAllByFilters(filter);
     }
 
-    public List<Reservation> findAllToAccept(Long hostId) {
-        return reservationRepository.findAllToAccept(hostId);
-    }
+
 }

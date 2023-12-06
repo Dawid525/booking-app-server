@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.auth;//package com.dpap.bookingapp.auth;
+package com.dpap.bookingapp.auth;
 
 import com.dpap.bookingapp.auth.dto.AuthenticationRequest;
 import com.dpap.bookingapp.auth.dto.AuthenticationResponse;

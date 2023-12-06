@@ -49,7 +49,7 @@ public class SecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**", "/swagger-ui", "/swagger-ui/*", "/v3/api-docs/**", "/swagger-ui/**")
+                        auth.requestMatchers("/api/auth/**","/files/images/**","/images/**", "/swagger-ui", "/swagger-ui/*", "/v3/api-docs/**", "/swagger-ui/**")
                                 .permitAll().requestMatchers(OPTIONS, "/**").permitAll().anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -61,7 +61,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));

@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.auth.userdetails;//package com.dpap.bookingapp.auth;
+package com.dpap.bookingapp.auth.userdetails;
 
 
 import com.dpap.bookingapp.users.User;

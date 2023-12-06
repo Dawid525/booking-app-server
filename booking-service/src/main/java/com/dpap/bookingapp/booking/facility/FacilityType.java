@@ -10,5 +10,7 @@ public enum FacilityType {
     WIFI,
     COFFEE,
     TWIN_BED,
-    SINGLE_BED
+    SINGLE_BED,
+    PET_FRIENDLY,
+    PARKING
 }

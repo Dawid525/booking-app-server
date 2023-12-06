@@ -18,6 +18,7 @@ public class ReportService {
 
     public void createReport(List<Reservation> reservations, String reportName) {
         if (!reservations.isEmpty()) {
+//            try (Writer writer = new FileWriter()) {
             try (Writer writer = new FileWriter(reportName + ".json")) {
                 Gson gson = new GsonBuilder().create();
                 gson.toJson(reservations, writer);

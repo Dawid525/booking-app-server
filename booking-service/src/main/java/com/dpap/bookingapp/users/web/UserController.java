@@ -93,7 +93,7 @@ class UserController {
         return ResponseEntity.status(204).build();
     }
 
-    @PatchMapping("/password")
+    @PutMapping("/password")
     ResponseEntity<?> changePasswordByLoggedUser(@Valid @RequestBody PasswordRequest passwordRequest) {
         userService.changePassword(passwordRequest, authenticationUserService.getLoggedUser());
         return ResponseEntity.status(204).build();

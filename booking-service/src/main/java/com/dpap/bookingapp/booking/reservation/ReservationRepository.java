@@ -27,11 +27,11 @@ public class ReservationRepository implements ReservationDatabase {
                     FROM reservations r JOIN reservation_states rs on r.state_id = rs.id
                     WHERE r.id = ?
                     """;
-    private static final String FIND_TO_ACCEPT =
+    private static final String FIND_ALL_BY_HOST =
             """
                     SELECT r.place_id, r.id, r.start, r.finish, rs.name AS state, r.user_id, r.room_id, r.at, r.value, r.free_cancellation_days
                     FROM reservations r JOIN reservation_states rs on r.state_id = rs.id JOIN places p on p.id = r.place_id
-                    WHERE rs.name = 'WAITING' AND p.user_id = ?
+                    AND p.user_id = ?
                     """;
     private static final String FIND_ALL =
             """
@@ -99,7 +99,7 @@ public class ReservationRepository implements ReservationDatabase {
 
     public List<Reservation> findAllToAccept(Long hostId) {
         return jdbcTemplate.query(
-                FIND_TO_ACCEPT,
+                FIND_ALL_BY_HOST,
                 reservationRowMapper(),
                 hostId
         );

@@ -1,4 +1,4 @@
-package com.dpap.bookingapp;
+package com.dpap.bookingapp.auth;
 
 
 import com.dpap.bookingapp.auth.exception.InvalidInputDataException;

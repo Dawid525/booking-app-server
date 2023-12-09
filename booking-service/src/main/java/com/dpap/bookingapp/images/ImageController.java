@@ -18,6 +18,5 @@ public class ImageController {
     @GetMapping
     public ResponseEntity<List<Image>> getImages(@RequestParam Long placeId) {
         return ResponseEntity.ok(repository.findAllByPlaceId(placeId));
-//        return ResponseEntity.ok(repository.findAllByPlaceId(placeId).stream().map(Image::getUrl).toList());
     }
 }

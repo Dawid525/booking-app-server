@@ -4,7 +4,7 @@ import com.dpap.bookingapp.auth.AuthenticationService;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceResponse;
 import com.dpap.bookingapp.booking.place.room.UpdateRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dto.AddRoomRequest;
-import com.dpap.bookingapp.timeslot.TimeSlot;
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,17 +30,19 @@ public class PlaceController {
 
     @GetMapping("/{placeId}")
     public ResponseEntity<PlaceResponse> findPlaceEntityById(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.findPlaceById(placeId));
+        return ResponseEntity.ok(placeService.findPlaceResponseById(placeId));
     }
 
     @GetMapping
     public ResponseEntity<List<PlaceResponse>> findAllPlaceEntities() {
         return ResponseEntity.ok(placeService.findAll());
     }
+
     @GetMapping("/{placeId}/details")
     public ResponseEntity<PlaceResponse> findPlaceDetailsById(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.findPlaceById(placeId));
+        return ResponseEntity.ok(placeService.findPlaceResponseById(placeId));
     }
+
     @GetMapping("/filters")
     public ResponseEntity<List<PlaceResponse>> fetchAllPlaceEntitiesWithFilters(
             @RequestParam(required = false) String voivodeship,
@@ -67,6 +69,23 @@ public class PlaceController {
             return ResponseEntity.ok(placeService.findAllByFilters(placeSearchFilter, roomSearchFilter, new TimeSlot(from, to)));
         }
         return ResponseEntity.ok(placeService.findAllByFilters(placeSearchFilter, roomSearchFilter));
+    }
+
+    @GetMapping("/rooms/filters")
+    public ResponseEntity<PlaceResponse> fetchAllPlaceEntitiesWithFilters(
+            @RequestParam Long placeId,
+            @RequestParam(required = false) Integer capacity,
+            @RequestParam(required = false) Long pricePerNight,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        var placeSearchFilter = PlaceSearchFilter.Builder.newBuilder()
+                .placeId(placeId)
+                .build();
+        var roomSearchFilter = RoomSearchFilter.Builder.newBuilder()
+                .capacity(capacity)
+                .pricePerNight(pricePerNight)
+                .build();
+        return ResponseEntity.ok(placeService.findAllByFilters(placeSearchFilter, roomSearchFilter, new TimeSlot(from, to)).get(0));
     }
 
     @GetMapping("/my")

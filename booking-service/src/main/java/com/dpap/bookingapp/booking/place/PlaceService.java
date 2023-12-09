@@ -1,6 +1,6 @@
 package com.dpap.bookingapp.booking.place;
 
-import com.dpap.bookingapp.availability.service.AvailabilityService;
+import com.dpap.bookingapp.availability.service.UsageService;
 import com.dpap.bookingapp.booking.common.JsonToCollectionMapper;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceEntity;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceRepository;
@@ -11,7 +11,7 @@ import com.dpap.bookingapp.booking.place.room.UpdateRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dataaccess.RoomEntity;
 import com.dpap.bookingapp.booking.place.room.dto.AddRoomRequest;
 import com.dpap.bookingapp.booking.place.room.dto.RoomDTO;
-import com.dpap.bookingapp.timeslot.TimeSlot;
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import com.dpap.bookingapp.users.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,16 +32,16 @@ import static com.dpap.bookingapp.booking.common.JsonToCollectionMapper.deserial
 @Service
 public class PlaceService {
 
-    private final AvailabilityService availabilityService;
+    private final UsageService usageService;
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
     private final RoomService roomService;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PlaceService(AvailabilityService availabilityService,
+    public PlaceService(UsageService usageService,
                         PlaceRepository placeRepository, UserRepository userRepository, RoomService roomService) {
-        this.availabilityService = availabilityService;
+        this.usageService = usageService;
         this.placeRepository = placeRepository;
         this.userRepository = userRepository;
         this.roomService = roomService;
@@ -81,7 +81,7 @@ public class PlaceService {
             List<RoomDTO> rooms = new ArrayList<>();
             place.rooms().forEach(
                     roomDTO -> {
-                        if (availabilityService.isObjectAvailable(roomDTO.id(), timeSlot)) {
+                        if (usageService.isObjectAvailable(roomDTO.id(), timeSlot)) {
                             rooms.add(roomDTO);
                         }
                     }
@@ -89,6 +89,20 @@ public class PlaceService {
             places.add(place.withRooms(rooms));
         }
         return places;
+    }
+
+    public PlaceResponse findAllRoomsInPlace(Long placeId, RoomSearchFilter roomSearchFilter, TimeSlot timeSlot) {
+        var place = findPlaceById(placeId);
+        List<RoomEntity> rooms = new ArrayList<>();
+
+        place.findRoomsByFilter(roomSearchFilter).forEach(
+                room -> {
+                    if (usageService.isObjectAvailable(room.getId(), timeSlot)) {
+                        rooms.add(room);
+                    }
+                }
+        );
+        return mapToPlaceResponseWithRooms(place, rooms);
     }
 
     public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter, RoomSearchFilter roomSearchFilter) {
@@ -130,10 +144,13 @@ public class PlaceService {
         return criteriaQuery.select(from).where(cb.and(predicates.toArray(new Predicate[0])));
     }
 
-    public PlaceResponse findPlaceById(Long placeId) {
+    public PlaceResponse findPlaceResponseById(Long placeId) {
+        return mapToPlaceResponse(findPlaceById(placeId));
+    }
+
+    public PlaceEntity findPlaceById(Long placeId) {
         return placeRepository
                 .findById(placeId)
-                .map(this::mapToPlaceResponse)
                 .orElseThrow(() -> new IllegalArgumentException("Not found place with id"));
     }
 

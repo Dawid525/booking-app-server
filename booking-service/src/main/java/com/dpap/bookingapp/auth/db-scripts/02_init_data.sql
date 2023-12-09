@@ -63,25 +63,25 @@ INSERT INTO places(id, description, name, address_city, address_building, addres
 VALUES ((SELECT nextval('seq_places')), 'Hostel nieopdal centrum', 'Noclegownia', 'Lublin', '4', 'Lubelska', 'Polska',
         'HOTEL',
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Huzar', 'Lublin', '4', 'Lubelska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Huzar', 'Lublin', '4', 'Lubelska', 'Polska',
         (SELECT name FROM categories WHERE id = 1),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Hotel Maximus', 'Lublin', '14', 'Lubelska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Hotel Maximus', 'Lublin', '14', 'Lubelska', 'Polska',
         (SELECT name FROM categories WHERE id = 1),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Hotel Rozmus', 'Lublin', '24', 'Lubelska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Hotel Rozmus', 'Lublin', '24', 'Lubelska', 'Polska',
         (SELECT name FROM categories WHERE id = 1),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Zajazd u Strusia', 'Lublin', '34', 'Lubelska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Zajazd u Strusia', 'Lublin', '34', 'Lubelska', 'Polska',
         (SELECT name FROM categories WHERE id = 1),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Rodzinna przystań', 'Lublin', '54', 'Lubelska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Rodzinna przystań', 'Lublin', '54', 'Lubelska', 'Polska',
         (SELECT name FROM categories WHERE id = 4),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Pole namiotowe u Karola', 'Lublin', '64', 'Zemborzycka', 'Polska',
+       ((SELECT nextval('seq_places')), 'Hotel', 'Pole namiotowe u Karola', 'Lublin', '64', 'Zemborzycka', 'Polska',
         (SELECT name FROM categories WHERE id = 5),
         'LUBELSKIE', 1),
-       ((SELECT nextval('seq_places')), 'Hostel', 'Hotel Korona', 'Lublin', '14', 'Kazimierska', 'Polska',
+       ((SELECT nextval('seq_places')), 'Aparatment', 'Hotel Korona', 'Lublin', '14', 'Kazimierska', 'Polska',
         (SELECT name FROM categories WHERE id = 1),
         'LUBELSKIE', 1),
        ((SELECT nextval('seq_places')), 'Hostel', 'Apartamenty Jodłowa', 'Lublin', '234', 'Jodłowa', 'Polska',
@@ -125,4 +125,14 @@ VALUES ((SELECT nextval('seq_reservations')), 1, 2, 2, '2023-07-07T12:00', '2023
 INSERT INTO reviews
 VALUES ((SELECT nextval('seq_reviews')), 'Great place with amazing views. There are also very comfortable beds.', 5, 1,
         1, '2023-07-11T12:00');
+INSERT INTO images
+VALUES ((SELECT nextval('seq_images')), 1, 'http://localhost:9990/files/images/image1');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 2, 'http://localhost:9990/files/images/image2');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 3, 'http://localhost:9990/files/images/image3');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 4, 'http://localhost:9990/files/images/image4');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 5, 'http://localhost:9990/files/images/image5');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 6, 'http://localhost:9990/files/images/image6');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 7, 'http://localhost:9990/files/images/image7');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 8, 'http://localhost:9990/files/images/image8');
+INSERT INTO images VALUES ((SELECT nextval('seq_images')), 9, 'http://localhost:9990/files/images/image9');
 

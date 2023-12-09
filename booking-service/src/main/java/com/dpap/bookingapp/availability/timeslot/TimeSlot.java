@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.timeslot;
+package com.dpap.bookingapp.availability.timeslot;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

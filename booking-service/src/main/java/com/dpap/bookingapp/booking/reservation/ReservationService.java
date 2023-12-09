@@ -1,7 +1,7 @@
 package com.dpap.bookingapp.booking.reservation;
 
 
-import com.dpap.bookingapp.availability.service.AvailabilityService;
+import com.dpap.bookingapp.availability.service.UsageService;
 import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
@@ -9,24 +9,23 @@ import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
 import com.dpap.bookingapp.notification.NotificationService;
-import com.dpap.bookingapp.timeslot.TimeSlot;
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @Component
 public class ReservationService {
 
-    private final AvailabilityService availabilityService;
+    private final UsageService usageService;
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
 
-    public ReservationService(AvailabilityService availabilityService, ReservationRepository reservationRepository, RoomService roomService, NotificationService notificationService, PlaceService placeService) {
-        this.availabilityService = availabilityService;
+    public ReservationService(UsageService usageService, ReservationRepository reservationRepository, RoomService roomService, NotificationService notificationService, PlaceService placeService) {
+        this.usageService = usageService;
         this.reservationRepository = reservationRepository;
         this.roomService = roomService;
     }
@@ -50,7 +49,7 @@ public class ReservationService {
                 BigDecimal.valueOf(room.getPricePerNight()),
                 14
         );
-        availabilityService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()), now);
+        usageService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()), now);
         reservationRepository.save(reservation);
     }
 
@@ -93,7 +92,7 @@ public class ReservationService {
     }
 
     private List<TimeSlot> findFreeSlotsIn(RoomId roomId, LocalDateTime from, LocalDateTime to, Integer duration) {
-        List<TimeSlot> splittedReservedTimeSlots = availabilityService.findAllReservedSlotsInPeriod(roomId.getId())
+        List<TimeSlot> splittedReservedTimeSlots = usageService.findAllReservedSlotsInPeriod(roomId.getId())
                 .stream()
                 .map((timeSlot -> timeSlot.allTimeSlotsWithDurationBetweenEach(duration)))
                 .flatMap(List::stream)
@@ -119,7 +118,7 @@ public class ReservationService {
 //    }fca
 
     public boolean checkRoomAvailability(RoomId id, TimeSlot timeSlot) {
-        return availabilityService.isObjectAvailable(id.getId(), timeSlot);
+        return usageService.isObjectAvailable(id.getId(), timeSlot);
     }
 
     public List<Reservation> findReservations(SearchReservationFilter filter) {

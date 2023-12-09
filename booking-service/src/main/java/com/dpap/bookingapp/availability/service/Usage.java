@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "availability")
+@Table(name = "usages")
 @Entity
-public class Availability {
+public class Usage {
 
     @Id
-    @SequenceGenerator(name = "availabilities_id_seq", sequenceName = "seq_availabilities",allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "availabilities_id_seq")
+    @SequenceGenerator(name = "usages_id_seq", sequenceName = "seq_usages",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "usages_id_seq")
     private Long id;
     private Long objectId;
     private LocalDateTime start;
     private LocalDateTime finish;
     private LocalDateTime at;
 
-    public Availability(Long id, Long objectId, LocalDateTime start, LocalDateTime finish, LocalDateTime at) {
+    public Usage(Long id, Long objectId, LocalDateTime start, LocalDateTime finish, LocalDateTime at) {
         this.id = id;
         this.objectId = objectId;
         this.start = start;
@@ -25,14 +25,14 @@ public class Availability {
         this.at = at;
     }
 
-    public Availability(Long objectId, LocalDateTime start, LocalDateTime finish, LocalDateTime at) {
+    public Usage(Long objectId, LocalDateTime start, LocalDateTime finish, LocalDateTime at) {
         this.objectId = objectId;
         this.start = start;
         this.finish = finish;
         this.at = at;
     }
 
-    public Availability() {
+    public Usage() {
 
     }
 

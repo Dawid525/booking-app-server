@@ -1,6 +1,6 @@
 package com.dpap.bookingapp;
 
-import com.dpap.bookingapp.availability.service.AvailabilityService;
+import com.dpap.bookingapp.availability.service.UsageService;
 import com.dpap.bookingapp.booking.place.PlaceCategory;
 import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.dataaccess.Address;
@@ -27,7 +27,7 @@ public class PlaceServiceTest {
 
 
     @Mock
-    AvailabilityService availabilityService;
+    UsageService usageService;
 
     @Mock
     PlaceRepository placeRepository;
@@ -57,7 +57,7 @@ public class PlaceServiceTest {
         placeRepository.save(place);
         when(placeRepository.findById(1L)).thenReturn(Optional.of(place));
 
-        var result = placeService.findPlaceById(1L);
+        var result = placeService.findPlaceResponseById(1L);
 
         Assertions.assertEquals(1L, result.id());
         Assertions.assertEquals("Hotelik", result.name());

@@ -68,7 +68,7 @@
         </dependency>
         <dependency>
             <groupId>com.dpap</groupId>
-            <artifactId>availability-service</artifactId>
+            <artifactId>usage-service</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

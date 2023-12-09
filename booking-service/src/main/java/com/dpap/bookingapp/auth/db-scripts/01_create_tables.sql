@@ -6,7 +6,7 @@ CREATE SEQUENCE seq_accommodations START 1;
 CREATE SEQUENCE seq_users START 1;
 CREATE SEQUENCE seq_images START 1;
 CREATE SEQUENCE seq_accommodations_rooms START 1;
-CREATE SEQUENCE seq_availabilities START 1 INCREMENT BY 1;;
+CREATE SEQUENCE seq_usages START 1 INCREMENT BY 1;;
 CREATE SEQUENCE seq_reviews START 1 INCREMENT BY 1;;
 CREATE TABLE roles
 (
@@ -77,7 +77,7 @@ CREATE TABLE facilities
     id   INT PRIMARY KEY NOT NULL,
     name TEXT
 );
-CREATE TABLE availability
+CREATE TABLE usage
 (
     id        INT PRIMARY KEY NOT NULL,
     object_id INT,

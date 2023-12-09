@@ -2,7 +2,7 @@ package com.dpap.bookingapp.booking.reservation;
 
 
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
-import com.dpap.bookingapp.timeslot.TimeSlot;
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;

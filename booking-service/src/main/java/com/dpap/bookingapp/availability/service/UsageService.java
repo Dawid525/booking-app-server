@@ -1,6 +1,6 @@
 package com.dpap.bookingapp.availability.service;
 
-import com.dpap.bookingapp.timeslot.TimeSlot;
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,37 +9,37 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class AvailabilityService {
+public class UsageService {
 
 
-    private final AvailabilityRepository availabilityRepository;
+    private final UsageRepository usageRepository;
 
-    public AvailabilityService(AvailabilityRepository availabilityRepository) {
-        this.availabilityRepository = availabilityRepository;
+    public UsageService(UsageRepository usageRepository) {
+        this.usageRepository = usageRepository;
     }
 
     public boolean isObjectAvailable(Long objectId, TimeSlot timeSlot) {
-        return availabilityRepository.
+        return usageRepository.
                 findAllByObjectIdBetweenDates(objectId, timeSlot.getStart(), timeSlot.getEnd()).isEmpty();
     }
 
     public void reserveObject(Long objectId, TimeSlot timeSlot, LocalDateTime at) {
-        availabilityRepository.save(
-                new Availability(objectId, timeSlot.getStart(), timeSlot.getEnd(), timeSlot.getEnd())
+        usageRepository.save(
+                new Usage(objectId, timeSlot.getStart(), timeSlot.getEnd(), timeSlot.getEnd())
         );
     }
 
     public List<TimeSlot> findAllReservedSlotsInPeriod(Long objectId) {
-        return availabilityRepository.findAllByObjectId(objectId).stream()
-                .map(availability -> new TimeSlot(availability.getStart(), availability.getFinish()))
+        return usageRepository.findAllByObjectId(objectId).stream()
+                .map(usage -> new TimeSlot(usage.getStart(), usage.getFinish()))
                 .toList();
 
     }
 
     @Transactional
     public void delete(Long objectId, TimeSlot timeSlot) {
-        List<Availability> availabilities = availabilityRepository
+        List<Usage> availabilities = usageRepository
                 .findAllByObjectIdBetweenDates(objectId, timeSlot.getStart(), timeSlot.getEnd());
-        availabilityRepository.deleteAll(availabilities);
+        usageRepository.deleteAll(availabilities);
     }
 }

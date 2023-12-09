@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.orders;
+package com.dpap.bookingapp.auth.orders;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

@@ -23,7 +23,7 @@ public class ReservationHostService {
 
     public void confirmReservation(Long userId, Long reservationId) {
         var reservation = findById(reservationId);
-        if (!placeService.findPlaceById(reservation.getPlaceId()).userId().equals(userId)) {
+        if (!placeService.findPlaceResponseById(reservation.getPlaceId()).userId().equals(userId)) {
             throw new RuntimeException("There is no matched place");
         }
         reservation.confirm();

@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.orders;
+package com.dpap.bookingapp.auth.orders;
 
 import org.springframework.stereotype.Service;
 

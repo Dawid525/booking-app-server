@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.availability.service;
+package com.dpap.bookingapp.availability.usage;
 
 import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class UsageService {
 
     public void reserveObject(Long objectId, TimeSlot timeSlot, LocalDateTime at) {
         usageRepository.save(
-                new Usage(objectId, timeSlot.getStart(), timeSlot.getEnd(), timeSlot.getEnd())
+                new Usage(objectId, timeSlot.getStart(), timeSlot.getEnd(), at)
         );
     }
 

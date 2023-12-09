@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
@@ -32,7 +33,9 @@ public class ClientFiles {
 
     @GetMapping(value = "/images/{name}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPhotos(@PathVariable String name)
-            throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+            throws ServerException, InsufficientDataException,
+            ErrorResponseException, IOException, NoSuchAlgorithmException,
+            InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         try (InputStream stream =
                      minioClient.getObject(
                              GetObjectArgs
@@ -44,46 +47,30 @@ public class ClientFiles {
         }
     }
 
-//    @GetMapping(value = "/images", produces = MediaType.IMAGE_JPEG_VALUE)
-//    public List<byte[]> f(@PathVariable String name, @RequestParam(name = "placeId") Long placeId)
-//            throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-//
-//        Iterable<Result<Item>> results = minioClient.listObjects(
-//                ListObjectsArgs.builder()
-//                        .bucket("booking")
-//                        .prefix(placeId.toString()) // Prefix folderu
-//                        .recursive(true)
-//                        .build()
-//        );
-//
-//        for (Result<Item> result : results) {
-//            Item item = result.get();
-//            InputStream stream = minioClient.getObject("booking", item.objectName());
-//            list.add(item.objectName(), stream);
-//        }
-//        return list;
-//    }
-
-    @PostMapping("/images/upload")
+    @PostMapping("/images")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile
                                                       file, @RequestParam(value = "placeId") Long placeId) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("Please upload a file");
             }
+            String prefix = UUID.randomUUID() + "_";
             minioClient.putObject(PutObjectArgs
                     .builder()
                     .bucket("booking")
-                    .object(file.getOriginalFilename())
-//                    .object(placeId + "/" + file.getOriginalFilename())
+                    .object(prefix + file.getOriginalFilename())
                     .contentType(file.getContentType())
                     .stream(new BufferedInputStream(file.getInputStream()), file.getSize(), 5242880)
                     .build());
-            imageRepository.save(new Image("http://localhost:9990/files/images/" + file.getOriginalFilename(), placeId));
+            imageRepository.save(new Image(buildFilePath(prefix,file.getOriginalFilename()), placeId));
             return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to upload file");
         }
+    }
+    private String buildFilePath(String prefix, String fileName){
+        var result = "http://localhost:9990/files/images/" + prefix + fileName;
+        return  result.replace(".jpg","");
     }
 }

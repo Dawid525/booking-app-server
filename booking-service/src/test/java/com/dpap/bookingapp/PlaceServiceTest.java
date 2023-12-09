@@ -1,6 +1,6 @@
 package com.dpap.bookingapp;
 
-import com.dpap.bookingapp.availability.service.UsageService;
+import com.dpap.bookingapp.availability.usage.UsageService;
 import com.dpap.bookingapp.booking.place.PlaceCategory;
 import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.dataaccess.Address;

@@ -1,6 +1,6 @@
 package com.dpap.bookingapp.booking.place;
 
-import com.dpap.bookingapp.availability.service.UsageService;
+import com.dpap.bookingapp.availability.usage.UsageService;
 import com.dpap.bookingapp.booking.common.JsonToCollectionMapper;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceEntity;
 import com.dpap.bookingapp.booking.place.dataaccess.PlaceRepository;
@@ -48,7 +48,7 @@ public class PlaceService {
     }
 
     @Transactional
-    public void addPlace(AddPlaceRequest request, Long userId) {
+    public Long addPlace(AddPlaceRequest request, Long userId) {
         var user = userRepository.findEntityById(userId)
                 .orElseThrow(() -> new RuntimeException("Not found user with id:" + userId));
         var place = Place.fromRequest(request, userId);
@@ -59,12 +59,13 @@ public class PlaceService {
         placeEntity.setUser(user);
         placeEntity.setDescription(place.getDescription());
         placeEntity.setAddress(request.address());
-        placeRepository.save(placeEntity);
+        var placeId = placeRepository.save(placeEntity).getId();
         List<RoomEntity> savedRooms = new ArrayList<>();
         for (AddRoomRequest roomRequest : request.rooms()) {
             savedRooms.add(roomService.addRoom(roomRequest, placeEntity));
         }
         savedRooms.forEach(placeEntity::addRoom);
+        return placeId;
     }
 
     public List<PlaceResponse> findAllByFilters(PlaceSearchFilter filter) {
@@ -81,7 +82,7 @@ public class PlaceService {
             List<RoomDTO> rooms = new ArrayList<>();
             place.rooms().forEach(
                     roomDTO -> {
-                        if (usageService.isObjectAvailable(roomDTO.id(), timeSlot)) {
+                        if (usageService.isObjectAvailable(roomDTO.id(), timeSlot.adjustHours(10,12))) {
                             rooms.add(roomDTO);
                         }
                     }
@@ -97,7 +98,7 @@ public class PlaceService {
 
         place.findRoomsByFilter(roomSearchFilter).forEach(
                 room -> {
-                    if (usageService.isObjectAvailable(room.getId(), timeSlot)) {
+                    if (usageService.isObjectAvailable(room.getId(), timeSlot.adjustHours(12,10))) {
                         rooms.add(room);
                     }
                 }

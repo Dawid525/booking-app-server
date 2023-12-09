@@ -95,9 +95,9 @@ public class PlaceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addPlaceEntity(@RequestBody @Valid AddPlaceRequest request) {
-        placeService.addPlace(request, authenticationService.getLoggedUser().id());
-        return ResponseEntity.status(201).build();
+    public ResponseEntity<Long> addPlaceEntity(@RequestBody @Valid AddPlaceRequest request) {
+        var placeId = placeService.addPlace(request, authenticationService.getLoggedUser().id());
+        return ResponseEntity.status(201).body(placeId);
     }
 
     @DeleteMapping("/{id}")

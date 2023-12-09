@@ -76,4 +76,19 @@ public class TimeSlot {
         return one.getEnd().isEqual(another.getStart()) || one.getEnd().isAfter(another.getStart());
     }
 
+    public TimeSlot adjustHours(int startHour, int endHour) {
+        var startDate = LocalDateTime.of(
+                this.start.getYear(),
+                this.start.getMonth(),
+                this.start.getDayOfMonth(),
+                startHour, 0, 0
+        );
+        var endDate = LocalDateTime.of(
+                this.end.getYear(),
+                this.end.getMonth(),
+                this.end.getDayOfMonth(),
+                endHour, 0, 0
+        );
+        return new TimeSlot(startDate, endDate);
+    }
 }

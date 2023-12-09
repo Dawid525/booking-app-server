@@ -1,4 +1,4 @@
-package com.dpap.bookingapp.availability.service;
+package com.dpap.bookingapp.availability.usage;
 
 import jakarta.persistence.*;
 
@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public class Usage {
 
     @Id
-    @SequenceGenerator(name = "usages_id_seq", sequenceName = "seq_usages",allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "usages_id_seq")
+    @SequenceGenerator(name = "usages_id_seq", sequenceName = "seq_usages", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usages_id_seq")
     private Long id;
     private Long objectId;
     private LocalDateTime start;

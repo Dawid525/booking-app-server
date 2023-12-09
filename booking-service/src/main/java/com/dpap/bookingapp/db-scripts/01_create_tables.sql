@@ -68,7 +68,6 @@ CREATE TABLE rooms
     facilities      jsonb,
     name            TEXT,
     description     TEXT,
-    image_url       TEXT,
     FOREIGN KEY (place_id) REFERENCES places (id)
 );
 
@@ -77,7 +76,7 @@ CREATE TABLE facilities
     id   INT PRIMARY KEY NOT NULL,
     name TEXT
 );
-CREATE TABLE usage
+CREATE TABLE usages
 (
     id        INT PRIMARY KEY NOT NULL,
     object_id INT,

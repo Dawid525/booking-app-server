@@ -1,7 +1,7 @@
 package com.dpap.bookingapp.booking.reservation;
 
 
-import com.dpap.bookingapp.availability.service.UsageService;
+import com.dpap.bookingapp.availability.usage.UsageService;
 import com.dpap.bookingapp.booking.place.PlaceService;
 import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
@@ -35,13 +35,13 @@ public class ReservationService {
     public void reserveRoom(AddReservationRequest request, Long userId) {
         var room = roomService.findRoomById(RoomId.fromLong(request.roomId()))
                 .orElseThrow(() -> new RuntimeException("Not found room with id: " + request.roomId()));
-        if (room.canBeReserved() &&
-                (!checkRoomAvailability(RoomId.fromLong(request.roomId()), new TimeSlot(request.start(), request.finish())))) {
+        if (//room.canBeReserved() &&
+                (!checkRoomAvailability(RoomId.fromLong(request.roomId()), new TimeSlot(request.start(), request.finish()).adjustHours(12,10)))) {
             throw new RuntimeException("Can not reserve room");
         }
         var now = LocalDateTime.now();
         Reservation reservation = Reservation.createReservation(
-                new TimeSlot(request.start(), request.finish()),
+               new TimeSlot(request.start(), request.finish()).adjustHours(12,10),
                 request.roomId(),
                 now,
                 userId,
@@ -49,9 +49,10 @@ public class ReservationService {
                 BigDecimal.valueOf(room.getPricePerNight()),
                 14
         );
-        usageService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()), now);
+        usageService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()).adjustHours(12,10), now);
         reservationRepository.save(reservation);
     }
+
 
 
     public void checkInReservation(Long userId, Long reservationId) {
@@ -109,12 +110,6 @@ public class ReservationService {
 //                .toList(); //TODO DD
 //    }
 //
-//    public RoomDTO findRoomAvailability(RoomId roomId, LocalDateTime from, LocalDateTime to) {
-//        var room = roomService.findRoomById(roomId);
-//        return new RoomDTO(
-//                room,
-//                findFreeSlotsIn(roomId, from, to, 22)
-//        ); //TODO XX
 //    }fca
 
     public boolean checkRoomAvailability(RoomId id, TimeSlot timeSlot) {

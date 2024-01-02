@@ -20,7 +20,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     public void sendNotification(Long userId, NotificationTemplate template) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(userService.findByUserId(userId).orElseThrow(() -> new RuntimeException("")).getEmail());
+        message.setTo(userService.findByUserId(userId).orElseThrow(() -> new RuntimeException("Not found user with id:" + userId)).getEmail());
         message.setSubject("Reservation: " + template.getReservationId() + " updated.");
         message.setText(template.getContent());
         javaMailSender.send(message);

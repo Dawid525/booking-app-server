@@ -32,7 +32,8 @@ public class ReviewService {
                         review.getRating(),
                         userService.findByUserId(review.getUserId()).get().getEmail(),
                         review.getContent(),
-                        review.getPlaceId()
+                        review.getPlaceId(),
+                        review.getAt().toString()
                 ))
                 .toList();
     }

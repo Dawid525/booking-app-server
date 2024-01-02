@@ -240,8 +240,6 @@ public class PlaceService {
                 .setParameter("roomId", roomId)
                 .setParameter("userId", userId)
                 .getSingleResult();
-        if (request.capacity() != null)
-            room.setCapacity(request.capacity());
 
         var facilities = JsonToCollectionMapper.deserialize(room.getFacilities());
         if (request.facilities() != null) {

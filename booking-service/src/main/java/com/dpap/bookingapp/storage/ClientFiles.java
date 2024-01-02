@@ -40,7 +40,7 @@ public class ClientFiles {
                      minioClient.getObject(
                              GetObjectArgs
                                      .builder()
-                                     .bucket("booking")
+                                     .bucket("placeImages")
                                      .object(name + ".jpg")
                                      .build())) {
             return stream.readAllBytes();
@@ -54,23 +54,24 @@ public class ClientFiles {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("Please upload a file");
             }
-            String prefix = UUID.randomUUID() + "_";
+            var id = UUID.randomUUID().toString();
             minioClient.putObject(PutObjectArgs
                     .builder()
                     .bucket("booking")
-                    .object(prefix + file.getOriginalFilename())
+                    .object(id)
                     .contentType(file.getContentType())
                     .stream(new BufferedInputStream(file.getInputStream()), file.getSize(), 5242880)
                     .build());
-            imageRepository.save(new Image(buildFilePath(prefix,file.getOriginalFilename()), placeId));
+            imageRepository.save(new Image(buildFilePath(id), placeId));
             return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to upload file");
         }
     }
-    private String buildFilePath(String prefix, String fileName){
-        var result = "http://localhost:9990/files/images/" + prefix + fileName;
-        return  result.replace(".jpg","");
+
+    private String buildFilePath(String fileName) {
+        var result = "http://localhost:9990/files/images/" + fileName;
+        return result.replace(".jpg", "");
     }
 }

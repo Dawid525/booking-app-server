@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
-public class UserRepositoryTCIntegrationTest {
+public class RepositoryTCIntegrationTest {
 
     @Container
     public static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:11.1")

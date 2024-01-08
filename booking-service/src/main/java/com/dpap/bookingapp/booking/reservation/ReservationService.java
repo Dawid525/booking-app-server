@@ -69,6 +69,7 @@ public class ReservationService {
     public void cancelReservation(Long reservationId, Long userId) {
         var reservation = findByIdAndUserId(reservationId, userId);
         reservation.cancel(LocalDateTime.now());
+        usageService.deleteByObjectId(reservation.getRoomId().getId());
         reservationRepository.updateState(reservation.getId(), reservation.getState());
     }
 

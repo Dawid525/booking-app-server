@@ -52,7 +52,7 @@ public class ReservationService {
                 BigDecimal.valueOf(room.getPricePerNight()),
                 7
         );
-        usageService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()).adjustHours(12, 10), now);
+        usageService.busy(request.roomId(), new TimeSlot(request.start(), request.finish()).adjustHours(12, 10), now);
         reservationRepository.save(reservation);
         reservationEventPublisher.publish(new ReservationRequested(this, reservation));
     }

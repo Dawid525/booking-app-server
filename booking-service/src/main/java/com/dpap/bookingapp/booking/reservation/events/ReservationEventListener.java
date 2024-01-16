@@ -2,10 +2,8 @@ package com.dpap.bookingapp.booking.reservation.events;
 
 
 import com.dpap.bookingapp.booking.place.PlaceService;
-import com.dpap.bookingapp.booking.reservation.ReservationHostService;
 import com.dpap.bookingapp.notification.NotificationService;
 import com.dpap.bookingapp.notification.NotificationTemplate;
-import com.dpap.bookingapp.users.UserService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;

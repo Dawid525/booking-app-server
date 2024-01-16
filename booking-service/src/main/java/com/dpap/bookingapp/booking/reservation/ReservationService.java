@@ -1,14 +1,15 @@
 package com.dpap.bookingapp.booking.reservation;
 
 
+import com.dpap.bookingapp.availability.timeslot.TimeSlot;
 import com.dpap.bookingapp.availability.usage.UsageService;
 import com.dpap.bookingapp.booking.place.room.RoomService;
 import com.dpap.bookingapp.booking.place.room.dto.RoomId;
 import com.dpap.bookingapp.booking.reservation.dto.AddReservationRequest;
 import com.dpap.bookingapp.booking.reservation.dto.FeeRequest;
 import com.dpap.bookingapp.booking.reservation.dto.SearchReservationFilter;
-import com.dpap.bookingapp.notification.NotificationService;
-import com.dpap.bookingapp.availability.timeslot.TimeSlot;
+import com.dpap.bookingapp.booking.reservation.events.ReservationEventPublisher;
+import com.dpap.bookingapp.booking.reservation.events.ReservationRequested;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +20,16 @@ import java.util.List;
 @Component
 public class ReservationService {
 
-    private final UsageService usageService;
+    private final ReservationEventPublisher reservationEventPublisher;
     private final ReservationRepository reservationRepository;
+    private final UsageService usageService;
     private final RoomService roomService;
-    private final ReservationHostService reservationHostService;
 
-
-    public ReservationService(UsageService usageService, ReservationRepository reservationRepository, RoomService roomService, ReservationHostService reservationHostService) {
+    public ReservationService(UsageService usageService, ReservationRepository reservationRepository, RoomService roomService, ReservationHostService reservationHostService, ReservationEventPublisher reservationEventPublisher) {
         this.usageService = usageService;
         this.reservationRepository = reservationRepository;
         this.roomService = roomService;
-        this.reservationHostService = reservationHostService;
+        this.reservationEventPublisher = reservationEventPublisher;
     }
 
     @Transactional
@@ -54,26 +54,26 @@ public class ReservationService {
         );
         usageService.reserveObject(request.roomId(), new TimeSlot(request.start(), request.finish()).adjustHours(12, 10), now);
         reservationRepository.save(reservation);
-        reservationHostService.requestReservation(userId, reservation.getId());
+        reservationEventPublisher.publish(new ReservationRequested(this, reservation));
     }
 
     public void checkInReservation(Long userId, Long reservationId) {
         var reservation = findByIdAndUserId(reservationId, userId);
         reservation.checkIn();
-        reservationRepository.updateState(reservation.getId(), reservation.getState());
+        reservationRepository.update(reservation.getId(), reservation.getValue(), reservation.getState());
     }
 
     public void checkOutReservation(Long reservationId, Long userId) {
         var reservation = findByIdAndUserId(reservationId, userId);
         reservation.checkOut();
-        reservationRepository.updateState(reservation.getId(), reservation.getState());
+        reservationRepository.update(reservation.getId(), reservation.getValue(), reservation.getState());
     }
 
     public void cancelReservation(Long reservationId, Long userId) {
         var reservation = findByIdAndUserId(reservationId, userId);
         reservation.cancel(LocalDateTime.now());
         usageService.deleteByObjectId(reservation.getRoomId().getId());
-        reservationRepository.updateState(reservation.getId(), reservation.getState());
+        reservationRepository.update(reservation.getId(), reservation.getValue(), reservation.getState());
     }
 
     public void addCost(Long reservationId, Long userId, FeeRequest feeRequest) {

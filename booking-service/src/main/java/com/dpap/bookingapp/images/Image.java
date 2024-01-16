@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="images")
 public class Image {
+
     @Id
     @SequenceGenerator(name = "images_id_seq", sequenceName = "seq_images", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "images_id_seq")
@@ -16,12 +17,6 @@ public class Image {
     }
 
     public Image(String url, Long placeId) {
-        this.url = url;
-        this.placeId = placeId;
-    }
-
-    public Image(Long id, String url, Long placeId) {
-        this.id = id;
         this.url = url;
         this.placeId = placeId;
     }

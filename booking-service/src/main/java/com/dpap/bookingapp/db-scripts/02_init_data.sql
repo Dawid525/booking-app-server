@@ -110,15 +110,6 @@ VALUES ((SELECT nextval('seq_rooms')), 1, 'AVAILABLE', 1, 50.00, 'Pokoj jednooso
        ((SELECT nextval('seq_rooms')), 8, 'AVAILABLE',8, 300.00, 'Pokoj dwuosobowy z łazienką', '')
 ;
 
--- INSERT INTO room_details(id, name, description, image_url, room_id)
--- VALUES ((SELECT nextval('seq_room_details')), 'Pokoj jednoosobowy z łazienką na korytarzu', '', 'first', 1),
---        ((SELECT nextval('seq_room_details')), 'Pokoj dwuosobowy z łazienką na korytarzu', '', 'second', 2),
---        ((SELECT nextval('seq_room_details')), 'Pokoj trzyosobowy z łazienką', '', 3),
---        ((SELECT nextval('seq_room_details')), 'Pokoj dwuosobowy z łazienką', '', 'third', 4),
---        ((SELECT nextval('seq_room_details')), 'Pokoj dwuosobowy z łazienką', '', 'third', 5),
---        ((SELECT nextval('seq_room_details')), 'Pokoj trzyosobowy z łazienką', '', 'third', 6),
---        ((SELECT nextval('seq_room_details')), 'Apartament z łazienką', '', 'third', 7);
-
 INSERT INTO reservation_states
 VALUES (1, 'CONFIRMED'),
        (2, 'CHECK_IN'),

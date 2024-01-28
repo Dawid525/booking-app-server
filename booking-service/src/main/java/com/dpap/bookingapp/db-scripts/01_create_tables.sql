@@ -124,24 +124,3 @@ CREATE TABLE images
     place_id INT             NOT NULL,
     url      text
 );
--- CREATE TABLE accommodations
--- (
---     id             INT PRIMARY KEY NOT NULL,
---     user_id        INT,
---     landlord_id    INT,
---     reservation_id INT,
---     place_id       INT,
---     start_date     TIMESTAMP,
---     end_date       TIMESTAMP,
---     value          FLOAT,
---     duration       INT
--- );
---
--- CREATE TABLE accommodations_rooms
--- (
---     id               INT NOT NULL,
---     room_id          INT NOT NULL,
---     accommodation_id INT NOT NULL,
---     FOREIGN KEY (accommodation_id) REFERENCES accommodations (id),
---     FOREIGN KEY (room_id) REFERENCES rooms (id)
--- );
